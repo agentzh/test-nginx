@@ -611,7 +611,10 @@ sub run_test_helper ($$) {
         $cmd = quote_sh_args($cmd);
 
         warn "$cmd\n";
-        system "unbuffer $cmd > /dev/stderr";
+        $cmd = "unbuffer $cmd > /dev/stderr";
+        if (system($cmd) != 0) {
+          bail_out("Failed to run '${cmd}': return code $?");
+        }
     }
 
     if ($CheckLeak && !defined $block->no_check_leak) {
